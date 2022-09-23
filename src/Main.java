@@ -1,26 +1,39 @@
 import processing.core.PApplet;
 import libvgm.VGMPlayer;
+import processing.core.PFont;
+import processing.core.PImage;
 
 import java.io.File;
 
 public class Main extends PApplet {
-    private VGMPlayer player;
+    final float VERCODE = 0;
+    final float HIRES_MULT = 2;
+
+    VGMPlayer player;
+    ThemeEngine t;
+    PImage logo_icon;
+    PFont[] fonts;
+
     final int TIME = 50;
     private String log = "start";
 
     public void settings() {
-        size(300, 180);
+        size(724, 430);
     }
 
     public void setup() {
-        surface.setTitle("vlco_o P3SynthVG");
+        surface.setTitle("vlco_o P3synthVG");
+
+        t = new ThemeEngine();
+        t.setTheme("Fresh Blue");
 
         this.player = new VGMPlayer(44100);
         player.setVolume(0.5);
     }
 
     public void draw() {
-        background(0);
+        background(t.theme[2]);
+        fill(t.theme[0]);
 
         if (!player.isPlaying()) {
             text(log, 24, 24);
@@ -32,8 +45,9 @@ public class Main extends PApplet {
         textSize(24);
         text("/ " + (player.getTrackCount() - 1), 96, 48);
         text(String.valueOf(player.getCurrentTime()), 24, 72);
+        text(String.valueOf(player.getPlaybackRateFactor()), 24, 96);
         textSize(12);
-        text("click = load file; arrows = prev/next track", 24, 128);
+        text("click = load file; arrows = prev/next track & up/down vol", 24, 128);
     }
 
     public void keyPressed() {
@@ -51,7 +65,12 @@ public class Main extends PApplet {
                 throw new RuntimeException(e);
             }
         }
-
+        else if (keyCode == UP) {
+            player.setPlaybackRateFactor((float) (player.getPlaybackRateFactor() + 0.1));
+        }
+        else if (keyCode == DOWN) {
+            player.setPlaybackRateFactor((float) (player.getPlaybackRateFactor() - 0.1));
+        }
     }
 
     public void mouseClicked() {

@@ -2,6 +2,7 @@ import processing.core.PApplet;
 import libvgm.VGMPlayer;
 import processing.core.PFont;
 import processing.core.PImage;
+import uibooster.UiBooster;
 
 import java.io.File;
 
@@ -9,6 +10,8 @@ public class Main extends PApplet {
     final float VERCODE = 0;
 
     VGMPlayer player;
+    PlayerDisplay playerDisplay;
+    UiBooster ui;
     ThemeEngine t;
     PImage logoIcon;
     PFont[] fonts;
@@ -26,15 +29,17 @@ public class Main extends PApplet {
     public void setup() {
         surface.setTitle("vlco_o P3synthVG");
 
+        this.player = new VGMPlayer(44100);
+        player.setVolume(0.5);
+
+        playerDisplay = new PlayerDisplay(this, player);
+        ui = new UiBooster();
         t = new ThemeEngine();
 
         setupImages();
         setupFonts();
         setupButtons();
         t.setTheme("Fresh Blue");
-
-        this.player = new VGMPlayer(44100);
-        player.setVolume(0.5);
     }
 
     private void setupButtons() {
@@ -68,40 +73,40 @@ public class Main extends PApplet {
 
     public void draw() {
         background(t.theme[2]);
-        fill(t.theme[0]);
 
-        image(logoIcon, 310, 10);
         mediaButtons.redraw();
         settingButtons.redraw();
+        image(logoIcon, 310, 10);
+        playerDisplay.redraw(true);
 
-        textAlign(LEFT);
-        if (!player.isPlaying()) {
-            textFont(fonts[2]);
-            text(log, 24, 24);
-            return;
-        }
-
-        textFont(fonts[2]);
-        text(String.valueOf(player.getCurrentTrack()), 24, 48);
-        textFont(fonts[1]);
-        text("/ " + (player.getTrackCount() - 1), 96, 48);
-        text(String.valueOf(player.getCurrentTime()), 24, 72);
-        text(String.valueOf(player.getPlaybackRateFactor()), 24, 96);
-
-        textAlign(RIGHT);
-        textFont(fonts[5]);
-        fill(t.theme[0], 100);
-        text(player.getEmuName(), 724, 48);
+//        textAlign(LEFT);
+//        if (!player.isPlaying()) {
+//            textFont(fonts[2]);
+//            text(log, 24, 24);
+//            return;
+//        }
+//
+//        textFont(fonts[2]);
+//        text(String.valueOf(player.getCurrentTrack()), 24, 48);
+//        textFont(fonts[1]);
+//        text("/ " + (player.getTrackCount() - 1), 96, 48);
+//        text(String.valueOf(player.getCurrentTime()), 24, 72);
+//        text(String.valueOf(player.getPlaybackRateFactor()), 24, 96);
+//
+//        textAlign(RIGHT);
+//        textFont(fonts[5]);
+//        fill(t.theme[0], 100);
+//        text(player.getEmuName(), 724, 48);
     }
 
     public void keyPressed() {
         if (keyCode == UP) {
-            player.setPlaybackRateFactor((float) (player.getPlaybackRateFactor() + 0.1));
-        }
-        else if (keyCode == DOWN) {
-            player.setPlaybackRateFactor((float) (player.getPlaybackRateFactor() - 0.1));
-        }
+        player.setPlaybackRateFactor((float) (player.getPlaybackRateFactor() + 0.1));
     }
+        else if (keyCode == DOWN) {
+        player.setPlaybackRateFactor((float) (player.getPlaybackRateFactor() - 0.1));
+    }
+}
 
     public void mousePressed() {
         // messy... but it works
@@ -163,6 +168,11 @@ public class Main extends PApplet {
                 currMidPressed = null;
             }
         }
+    }
+
+    String shrinkString(String original, int maxLength) {
+        if (original.length() > maxLength) original = original.substring(0, maxLength - 3) + "...";
+        return original;
     }
 
     public void fileSelected(File sel) {

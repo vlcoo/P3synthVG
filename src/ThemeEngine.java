@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.HashMap;
 
 public class ThemeEngine {
@@ -17,17 +18,29 @@ public class ThemeEngine {
 
     private void loadThemes() {
         // theme is an array of ints (colors in hex) in order: darker, dark, neutral, light, lightest
-        int[] theme_01 = {0x000000, 0x5151cf, 0x809fff, 0xbfcfff, 0xffffff};
+        int[] theme_01 = {Color.decode("#000000").getRGB(), Color.decode("#5151cf").getRGB(),
+                Color.decode("#809fff").getRGB(), Color.decode("#bfcfff").getRGB(),
+                Color.decode("#ffffff").getRGB()};
         availableThemes.put("Fresh Blue", theme_01);
-        int[] theme_03 = {0x000000, 0xd50000, 0xff5131, 0xff867c, 0xffffff};
-        availableThemes.put("Hot Red", theme_03);
-        int[] theme_04 = {0x000000, 0x00b248, 0x00e676, 0x66ffa6, 0xffffff};
-        availableThemes.put("Crisp Green", theme_04);
-        int[] theme_06 = {0x000000, 0xc6a700, 0xfdd835, 0xffff6b, 0xffffff};
-        availableThemes.put("Summer Yellow", theme_06);
-        int[] theme_02 = {0x5c1f09, 0xb2593f, 0xdf825f, 0xffd2a2, 0xffffff};
-        availableThemes.put("GX Peach", theme_02);
-        int[] theme_05 = {0xffffff, 0x000000, 0x000000, 0xffffff, 0xffffff};
-        availableThemes.put("Black & White", theme_05);
+        int[] theme_03 = {Color.decode("#000000").getRGB(), Color.decode("#d50000").getRGB(),
+                Color.decode("#ff5131").getRGB(), Color.decode("#ff867c").getRGB(),
+                Color.decode("#ffffff").getRGB()};
+                availableThemes.put("Hot Red", theme_03);
+        int[] theme_04 = {Color.decode("#000000").getRGB(), Color.decode("#00b248").getRGB(),
+                Color.decode("#00e676").getRGB(), Color.decode("#66ffa6").getRGB(),
+                Color.decode("#ffffff").getRGB()};
+                availableThemes.put("Crisp Green", theme_04);
+        int[] theme_06 = {Color.decode("#000000").getRGB(), Color.decode("#c6a700").getRGB(),
+                Color.decode("#fdd835").getRGB(), Color.decode("#ffff6b").getRGB(),
+                Color.decode("#ffffff").getRGB()};
+                availableThemes.put("Summer Yellow", theme_06);
+        int[] theme_02 = {Color.decode("#5c1f09").getRGB(), Color.decode("#b2593f").getRGB(),
+                Color.decode("#df825f").getRGB(), Color.decode("#ffd2a2").getRGB(),
+                Color.decode("#ffffff").getRGB()};
+                availableThemes.put("GX Peach", theme_02);
+        int[] theme_05 = {Color.decode("#ffffff").getRGB(), Color.decode("#000000").getRGB(),
+                Color.decode("#000000").getRGB(), Color.decode("#ffffff").getRGB(),
+                Color.decode("#ffffff").getRGB()};
+                availableThemes.put("Black & White", theme_05);
     }
-}
+    }

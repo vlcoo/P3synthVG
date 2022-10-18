@@ -44,7 +44,7 @@ public class Button {
         window.fill(window.t.theme[0]);
         window.textAlign(window.CENTER);
         window.textFont(window.fonts[0]);
-        if (showLabel) window.text(label, x + this.width / 2, y - 2);
+        if (showLabel) window.text(label, (float) (x + this.width / 2.0), y - 2);
     }
 
     public boolean collided() {

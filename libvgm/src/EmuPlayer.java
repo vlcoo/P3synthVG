@@ -4,6 +4,8 @@ import javax.sound.sampled.*;
 
 public class EmuPlayer implements Runnable
 {
+    public String emuName = "";
+
     // Number of tracks
     public int getTrackCount()
     {
@@ -14,11 +16,12 @@ public class EmuPlayer implements Runnable
     // After time seconds, the track starts fading.
     public void startTrack(int track, int time) throws Exception
     {
-        pause();
+        if (playing_) pause();
         if (line != null)
             line.flush();
         emu.startTrack(track);
         emu.setFade(time, 6);
+        setEmuName();
         play();
     }
 
@@ -54,14 +57,19 @@ public class EmuPlayer implements Runnable
         return volume_;
     }
 
-    public void setPlaybackRateFactor(double factor) {
+    public void setPlaybackRateFactor(float factor) {
         if (factor < 0.0) factor = 0;
         if (factor > 2.0) factor = 2;
 
-        playRateFactor = emu.setPlaybackRateFactor(factor);
+        playRateFactor = factor;
+        emu.setPlaybackRateFactor(factor);
     }
 
-    public double getPlaybackRateFactor() { return playRateFactor; }
+    public float getPlaybackRateFactor() { return playRateFactor; }
+
+    private void setEmuName() {
+        this.emuName = emu.getClass().getName().replace("Emu", "").replace("libvgm.", "").toUpperCase();
+    }
 
     // Pauses if track was playing.
     public void pause() throws Exception
@@ -135,7 +143,7 @@ public class EmuPlayer implements Runnable
     volatile boolean playing_;
     SourceDataLine line;
     double volume_ = 1.0;
-    double playRateFactor = 1.0;
+    float playRateFactor = 1;
 
     public void run()
     {

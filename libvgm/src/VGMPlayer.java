@@ -32,6 +32,11 @@ public class VGMPlayer extends EmuPlayer
 {
     int sampleRate;
 
+    final String DEFAULT_STOPPED_MSG = "Player stopped";
+
+    public String currFilename = DEFAULT_STOPPED_MSG;
+    public String customInfoMsg = "";
+
     public VGMPlayer(int sampleRate)
     {
         this.sampleRate = sampleRate;
@@ -43,6 +48,7 @@ public class VGMPlayer extends EmuPlayer
     public void loadFile(String path) throws Exception
     {
         stop();
+        closeFile();
 
         if (!loadedPath.equals(path))
         {
@@ -64,6 +70,9 @@ public class VGMPlayer extends EmuPlayer
             // now that new emulator is ready, replace old one
             setEmu(emu, actualSampleRate);
             loadedPath = path;
+
+            currFilename = path;
+            customInfoMsg = "";
         }
     }
 
@@ -75,6 +84,7 @@ public class VGMPlayer extends EmuPlayer
         archiveData = null;
         loadedUrl = "";
         loadedPath = "";
+        currFilename = DEFAULT_STOPPED_MSG;
     }
 
 // private

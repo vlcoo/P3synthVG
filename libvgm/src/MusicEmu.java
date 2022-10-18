@@ -108,7 +108,7 @@ public class MusicEmu
         return trackEnded_;
     }
 
-    public double setPlaybackRateFactor(double factor) { return 0; }
+    public float setPlaybackRateFactor(float factor) { return 0; }
 
 // protected
 

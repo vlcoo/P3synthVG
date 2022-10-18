@@ -111,7 +111,7 @@ public final class NsfEmu extends NesCpu
 
         apu.setOutput(buf.center());
 
-        return header[trackCountOff] & 0xFF;
+        return (header[trackCountOff] & 0xFF) - 1;
     }
 
     private void cpuCall(int addr)
@@ -155,10 +155,10 @@ public final class NsfEmu extends NesCpu
         cpuCall(getLE16(header, initAddrOff));
     }
 
-    public double setPlaybackRateFactor(double factor) {
+    public float setPlaybackRateFactor(float factor) {
         int cr = (int) ((int) (clockRate + 0.5) * factor);
         setClockRate(cr);
-        return cr / clockRate;
+        return (float) (cr / clockRate);
     }
 
     protected int runClocks(int clockCount)
@@ -236,6 +236,7 @@ public final class NsfEmu extends NesCpu
         // APU
         if ((addr ^ 0x4000) <= 0x17)
         {
+            ram[addr] = (byte) data;
             apu.write(time + endTime, addr, data);
             return;
         }

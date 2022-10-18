@@ -1,5 +1,5 @@
+import libvgm.*;
 import processing.core.PApplet;
-import libvgm.VGMPlayer;
 import processing.core.PFont;
 import processing.core.PImage;
 import uibooster.UiBooster;
@@ -7,8 +7,6 @@ import uibooster.UiBooster;
 import java.io.File;
 
 public class Main extends PApplet {
-    final float VERCODE = 0;
-
     VGMPlayer player;
     PlayerDisplay playerDisplay;
     UiBooster ui;
@@ -17,20 +15,19 @@ public class Main extends PApplet {
     PFont[] fonts;
     Button currMidPressed;
     ButtonToolbar mediaButtons;
-    ButtonToolbar settingButtons;
+    Button buttonHelp;
 
-    final int TIME = 50;
-    private String log = "start";
+    final int TIME = 120;
 
     public void settings() {
-        size(724, 430);
+        size(300, 180);
     }
 
     public void setup() {
         surface.setTitle("vlco_o P3synthVG");
 
         this.player = new VGMPlayer(44100);
-        player.setVolume(0.5);
+        player.setVolume(0.2);
 
         playerDisplay = new PlayerDisplay(this, player);
         ui = new UiBooster();
@@ -39,7 +36,7 @@ public class Main extends PApplet {
         setupImages();
         setupFonts();
         setupButtons();
-        t.setTheme("Fresh Blue");
+        t.setTheme();
     }
 
     private void setupButtons() {
@@ -48,13 +45,9 @@ public class Main extends PApplet {
         Button b2 = new Button(this, "pause", "Pause");
         Button b3 = new Button(this, "next", "Next");
         Button[] buttons1 = {b1, b4, b2, b3};
-        mediaButtons = new ButtonToolbar(150, 16, 1.3, 0, buttons1);
+        mediaButtons = new ButtonToolbar(154, 16, 1.1, 0, buttons1);
 
-        b1 = new Button(this, "info", "Help");
-        b2 = new Button(this, "confTheme", "Theme");
-        b3 = new Button(this, "update", "Update");
-        Button[] buttons2 = {b2, b1, b3};
-        settingButtons = new ButtonToolbar(464, 16, 1.3, 0, buttons2);
+        buttonHelp = new Button(this, 0, 0,  "info", "");
     }
 
     private void setupFonts() {
@@ -64,7 +57,7 @@ public class Main extends PApplet {
         fonts[2] = loadFont("data/fonts/terminusB14.vlw");
         fonts[3] = loadFont("data/fonts/terminusBI14.vlw");
         fonts[4] = loadFont("data/fonts/robotoBI16.vlw");
-        fonts[5] = loadFont("data/fonts/robotoBI70.vlw");
+        fonts[5] = loadFont("data/fonts/robotoBI64.vlw");
     }
 
     private void setupImages() {
@@ -74,29 +67,10 @@ public class Main extends PApplet {
     public void draw() {
         background(t.theme[2]);
 
+        image(logoIcon, 16, 8);
+        playerDisplay.redraw();
         mediaButtons.redraw();
-        settingButtons.redraw();
-        image(logoIcon, 310, 10);
-        playerDisplay.redraw(true);
-
-//        textAlign(LEFT);
-//        if (!player.isPlaying()) {
-//            textFont(fonts[2]);
-//            text(log, 24, 24);
-//            return;
-//        }
-//
-//        textFont(fonts[2]);
-//        text(String.valueOf(player.getCurrentTrack()), 24, 48);
-//        textFont(fonts[1]);
-//        text("/ " + (player.getTrackCount() - 1), 96, 48);
-//        text(String.valueOf(player.getCurrentTime()), 24, 72);
-//        text(String.valueOf(player.getPlaybackRateFactor()), 24, 96);
-//
-//        textAlign(RIGHT);
-//        textFont(fonts[5]);
-//        fill(t.theme[0], 100);
-//        text(player.getEmuName(), 724, 48);
+        buttonHelp.redraw();
     }
 
     public void keyPressed() {
@@ -115,9 +89,7 @@ public class Main extends PApplet {
                 if (b.iconFilename.equals("pause")) continue;
                 if (b.collided()) currMidPressed = b;
             }
-            for (Button b : settingButtons.buttons.values()) {
-                if (b.collided()) currMidPressed = b;
-            }
+            if (buttonHelp.collided()) currMidPressed = buttonHelp;
 
             if (currMidPressed != null) currMidPressed.setPressed(true);
         }
@@ -146,7 +118,8 @@ public class Main extends PApplet {
             }
 
             if (mediaButtons.collided("open")) {
-                selectInput("Open file", "fileSelected");
+                fileSelected(ui.showFileSelection("Video Game Music files",
+                        "vgm", "nsf", "gbs", "spc", "vgz", "zip", "gz"));
             }
 
             else if (mediaButtons.collided("pause")) {
@@ -155,12 +128,22 @@ public class Main extends PApplet {
                 try {
                     if (me.pressed) player.play();
                     else player.pause();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (Exception ignored) {
+
                 }
 
+                if (currMidPressed != null) currMidPressed.setPressed(false); // avoid button stucking when click slide
                 me.setPressed(!me.pressed);
                 currMidPressed = null;
+            }
+
+            else if (buttonHelp.collided()) {
+                ui.showWarningDialog("Thanks for using P3synthVG.\n\n" +
+                        "" +
+                        "Further development of this program has been cancelled,\n" +
+                        "so this remains as a proof of concept.\n\n" +
+                        "" +
+                        "vlcoo.net  |  github.com/vlcoo/P3synthVG", "Message");
             }
 
             if (currMidPressed != null) {
@@ -170,8 +153,8 @@ public class Main extends PApplet {
         }
     }
 
-    String shrinkString(String original, int maxLength) {
-        if (original.length() > maxLength) original = original.substring(0, maxLength - 3) + "...";
+    String shrinkString(String original) {
+        if (original.length() > 68) original = original.substring(0, 68 - 3) + "...";
         return original;
     }
 
@@ -186,9 +169,9 @@ public class Main extends PApplet {
                 mediaButtons.getButton("pause").setPressed(false);
             }
             catch (IllegalArgumentException iae) {
-                this.log = "* file err...!";
+                player.customInfoMsg = "Invalid file";
             } catch (Exception e) {
-                this.log = "* lib err...!";
+                player.customInfoMsg = "Library error";
             }
         }
     }
